@@ -25,15 +25,32 @@ def composite_background(
 
 def paste_image(
     back_image_binary,
-    pasted_image_binary
+    pasted_image_binary,
+    position
 ):
     back_image = Image.open(back_image_binary).convert('RGBA')
     pasted_image = Image.open(pasted_image_binary).convert('RGBA')
     back_size = back_image.size
     pasted_image.thumbnail((back_size[0] * 0.2, back_size[1] * 0.2), Image.LANCZOS)
     layer = Image.new('RGBA', back_image.size, (255, 255, 255, 0))
-    layer.paste(pasted_image, (0, 0))
+    coordinate = paste_position(position, back_size, pasted_image.size)
+    layer.paste(pasted_image, coordinate)
     canvas = Image.alpha_composite(back_image, layer)
     bytes_io = io.BytesIO()
     canvas.save(bytes_io, 'PNG')
     return bytes_io
+
+
+def paste_position(position, back_size, pasted_size):
+    if position['side'] is 'left':
+        x = 0
+    elif position['side'] is 'right':
+        x = back_size[0] - pasted_size[0]
+
+    if position['length'] is 'top':
+        y = 0
+    elif position['length'] is 'bottom':
+        y = back_size[1] - pasted_size[1]
+
+    return (x, y)
+
