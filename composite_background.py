@@ -21,3 +21,18 @@ def composite_background(
     bytes_io = io.BytesIO()
     canvas.save(bytes_io, file_type)
     return bytes_io
+
+
+def paste_image(
+    back_image_binary,
+    pasted_image_binary
+):
+    back_image = Image.open(back_image_binary).convert('RGBA')
+    pasted_image = Image.open(pasted_image_binary).convert('RGBA')
+    pasted_image.thumbnail((100, 100, Image.LANCZOS))
+    layer = Image.new('RGBA', back_image.size, (255, 255, 255, 0))
+    layer.paste(pasted_image, (0, 0))
+    canvas = Image.alpha_composite(back_image, layer)
+    bytes_io = io.BytesIO()
+    canvas.save(bytes_io, 'PNG')
+    return bytes_io
