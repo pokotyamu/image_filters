@@ -54,3 +54,27 @@ def paste_position(position, back_size, pasted_size):
 
     return (x, y)
 
+
+def expand_space(image_binary, size, side, color=(255, 255, 255)):
+    image = Image.open(image_binary)
+    width, height = image.size
+
+    if side is 'left':
+        paste_position = (size, 0)
+        canvas_size = (width + size, height)
+    elif side is 'right':
+        paste_position = (0, 0)
+        canvas_size = (width + size, height)
+    elif side is 'top':
+        paste_position = (0, size)
+        canvas_size = (width, height + size)
+    elif side is 'bottom':
+        paste_position = (0, 0)
+        canvas_size = (width, height + size)
+
+    canvas = Image.new("RGB", canvas_size, color)
+    canvas.paste(image, paste_position)
+    bytes_io = io.BytesIO()
+    canvas.save(bytes_io, 'PNG')
+    return bytes_io
+
